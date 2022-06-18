@@ -16,53 +16,39 @@ set<int> getUniverse(vector<set<int>> F){
 
 //Solucion 1
 
-int comb(int N, int K,set<int> x, vector<set<int>> F)
+vector<int> comb(int N, int K,set<int> x, vector<set<int>> F)
 {
-    string bitmask(K, 1); // K leading 1's
-    bitmask.resize(N, 0); // N-K trailing 0's
-    // print integers and permute bitmask
-    int cant = 0;
-    int mayor = x.size();
+    string bitmask(K, 1);
+    bitmask.resize(N, 0);
+    vector<int> A;
     do {
         set<int> s;
-        for (int i = 0; i < N; ++i) // [0..N-1] integers
+        for (int i = 0; i < N; ++i)
         {
             if (bitmask[i]){
                 s.insert(F[i].begin(),F[i].end());
-                //cout << " " << i;
-                cant++;
-                if(x == s)
-                { 
-                    cout << endl << "MSC encontrado "<<cant<<" " << endl;
-                    if (cant < mayor){
-                        cout << cant << " - "<< mayor <<endl;
-                        mayor = cant;
-                    }
-                }
+                A.push_back(i);
+                if(x == s) return A;
             }
         }
-        cant=0;
-        //cout << endl;
-        //cout << "menor " << mayor <<endl;
         s.clear();
+        A.clear();
     } while (prev_permutation(bitmask.begin(), bitmask.end()));
-return mayor;
+    return A;
 }
 
 void exhaustiveSearch(set<int> x, vector<set<int>> F){
-    //Caso en que uno de los conjuntos sea igual al universo
-    int menor = x.size();
-    int cant = 0;
-    int retorno;
     for(size_t j = 1; j < F.size(); j++){
-       retorno = comb(F.size(),j,x,F);
-       if (retorno < menor){
-        menor = retorno;
-       }
+        vector<int> msc = comb(F.size(),j,x,F);
+        if (!msc.empty()){
+            cout << "MSC encontrado de tamaño: " << msc.size() << endl;
+            cout << "Los conjunto que lo forman son: " << endl;
+            for(size_t i = 0; i != msc.size(); i++)
+                cout << "S" << msc[i] << "  ";
+            cout << endl;
+            break;
+        }
     }
-    cout << menor << endl;
-    //comb(4,2,x,F);
-
 }
 
 int main(){
