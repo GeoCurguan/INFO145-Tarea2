@@ -16,37 +16,51 @@ set<int> getUniverse(vector<set<int>> F){
 
 //Solucion 1
 
-void comb(int N, int K,set<int> x, vector<set<int>> F)
+int comb(int N, int K,set<int> x, vector<set<int>> F)
 {
     string bitmask(K, 1); // K leading 1's
     bitmask.resize(N, 0); // N-K trailing 0's
     // print integers and permute bitmask
+    int cant = 0;
+    int mayor = x.size();
     do {
         set<int> s;
         for (int i = 0; i < N; ++i) // [0..N-1] integers
         {
             if (bitmask[i]){
                 s.insert(F[i].begin(),F[i].end());
-                cout << " " << i;
-                if(x == s) cout << endl << "MSC encontrado" << endl;
+                //cout << " " << i;
+                cant++;
+                if(x == s)
+                { 
+                    cout << endl << "MSC encontrado "<<cant<<" " << endl;
+                    if (cant < mayor){
+                        cout << cant << " - "<< mayor <<endl;
+                        mayor = cant;
+                    }
+                }
             }
         }
-        cout << endl;
+        cant=0;
+        //cout << endl;
+        //cout << "menor " << mayor <<endl;
         s.clear();
     } while (prev_permutation(bitmask.begin(), bitmask.end()));
+return mayor;
 }
 
 void exhaustiveSearch(set<int> x, vector<set<int>> F){
     //Caso en que uno de los conjuntos sea igual al universo
-    for (size_t i = 0; i < F.size(); i++){
-        if(F[i] == x){
-            cout << "MSC de tamaño 1 encontrado, correspondiente a S" << i+1 << endl;
-            return;
-        }
-    }
+    int menor = x.size();
+    int cant = 0;
+    int retorno;
     for(size_t j = 1; j < F.size(); j++){
-        comb(F.size(),j,x,F);
+       retorno = comb(F.size(),j,x,F);
+       if (retorno < menor){
+        menor = retorno;
+       }
     }
+    cout << menor << endl;
     //comb(4,2,x,F);
 
 }
