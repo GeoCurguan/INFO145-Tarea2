@@ -71,6 +71,35 @@ void exhaustiveSearch(set<int> x, vector<set<int>> F){
     }
     cout << "Fin Solucion 1" << endl << "-------------------------------------------------" << endl;
 }
+//Solucion 2
+
+void optimizedSearch(set<int> x, vector<set<int>> F){
+    cout << "Comenzando solucion 2......" << endl;
+    //Buscando los elementos que se encuentren en un solo conjunto
+    if(F.size() > 1){
+        set<int> inter;
+        set<int> setComp;
+        set_intersection(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(inter, inter.begin()));
+        set_symmetric_difference(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(setComp, setComp.begin()));
+        set<int> aux;
+        for (size_t i = 2; i < F.size(); i++)
+        {
+            aux.clear();
+            aux.insert(setComp.begin(),setComp.end());
+            setComp.clear();
+            set_intersection(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(inter, inter.begin()));
+            set_symmetric_difference(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(setComp, setComp.begin()));
+        }
+        //Por si se quiere imprimir todos los elementos que estan en mas de un conjunto
+        imprimirSets(inter);
+        setComp.clear();
+        set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
+        //setComp : Tiene los elementos que solo estan en un conjunto
+
+        //Falta ver cuales sets no es subconjunto de inter , sacarlo de F y ¿sacar el F[i] de x o solo sacar el elemento setComp o ambos?
+
+    }
+}
 
 //Solucion 3
 void greedAlgoritms(set<int> x, vector<set<int>> F){
@@ -105,6 +134,7 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
 
 int main(){
     // Set de ejemplos
+
     /*
     set<int> A = {1,2,3};
     set<int> B = {2,3,4,5};
@@ -118,11 +148,12 @@ int main(){
     F.push_back(C);
     F.push_back(D);
     F.push_back(E);
-    set<int> x;
-    x = getUniverse(F);
-    exhaustiveSearch(x,F);
-*/
-        // Set de ejemplos
+    //set<int> x;
+    //x = getUniverse(F);
+    //exhaustiveSearch(x,F);
+
+    // Set de ejemplos
+    */
     set<int> S1 = {1,2,3,4,5,6};
     set<int> S2= {5,6,8,9};
     set<int> S3= {1,4,7,10};
@@ -138,11 +169,20 @@ int main(){
     F.push_back(S5);
     F.push_back(S6);
 
+    /*set<int> intersect;
+    set_intersection(S1.begin(),S1.end(),S2.begin(),S2.end(), inserter(intersect, intersect.begin()));
+    set<int> unionLessIntersect;
+    set<int> test = {1,2,3,4,8,9};
+    set_symmetric_difference(test.begin(),test.end(),S3.begin(),S3.end(), inserter(unionLessIntersect, unionLessIntersect.begin()));
+    */
     set<int> x;
     x = getUniverse(F);
-    exhaustiveSearch(x,F);
-    //imprimirVector(F);
-    greedAlgoritms(x,F);
+
+    //exhaustiveSearch(x,F);
+    optimizedSearch(x,F);
+    //greedAlgoritms(x,F);
+
+
     /*it = s1.find(4);
     bool isIn = s1.find(3) != s1.end();
     cout << isIn << endl;
@@ -150,10 +190,8 @@ int main(){
     cout << *it;
     */
     //Iteracion sobre un set
-
-
     /*
-    for (auto i = x.begin(); i != x.end(); i++)
+    for (auto i = unionLessIntersect.begin(); i != unionLessIntersect.end(); i++)
     {
         cout << *i << " ";
     }
