@@ -91,12 +91,46 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
             set_symmetric_difference(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(setComp, setComp.begin()));
         }
         //Por si se quiere imprimir todos los elementos que estan en mas de un conjunto
-        imprimirSets(inter);
+        //imprimirSets(inter);
         setComp.clear();
         set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
         //setComp : Tiene los elementos que solo estan en un conjunto
+        size_t c = 0;
+        //aca deberia buscar todos los sets que tengan el elemento que solo está en un solo conjunto
+        while(c != F.size() && F[c].find(12) == F[c].end()) c++;
+        //F[c].clear();
 
-        //Falta ver cuales sets no es subconjunto de inter , sacarlo de F y ¿sacar el F[i] de x o solo sacar el elemento setComp o ambos?
+        //Si se cumple, se aplica la primera optimizacion
+        if(c != F.size()){
+            set<int>::iterator iter;
+            set<int>::iterator del;
+            for(iter=F[c].begin(); iter!=F[c].end(); iter++){
+                x.erase(x.find(*iter));
+                for(size_t j=0;j < F.size(); j++){
+                    if(j != c)((del = find(F[j].begin(), F[j].end(), *iter)) == F[j].end()) ? del : F[j].erase(del);
+                }
+            }
+            //cout << "Set : \n" ;
+            //imprimirSets(x);
+            F.erase(F.begin() + c);
+            //imprimirVector(F);
+
+            for(size_t j = 1; j < F.size(); j++){
+                vector<int> msc = comb(F.size(),j,x,F);
+                if (!msc.empty()){
+                    cout << "MSC encontrado de tamaño: " << msc.size() << endl;
+                    //En caso de que se quiera imprimir
+                    cout << "Los conjunto que lo forman son: " << endl;
+                    for(size_t i = 0; i != msc.size(); i++){
+                        cout << "S" << msc[i]+1 << "  ";
+                        imprimirSets(F[msc[i]]);
+                    }
+                    cout << endl;
+                    break;
+                }
+            }
+        }
+        //imprimirVector(msc);
 
     }
 }
@@ -157,7 +191,7 @@ int main(){
     set<int> S1 = {1,2,3,4,5,6};
     set<int> S2= {5,6,8,9};
     set<int> S3= {1,4,7,10};
-    set<int> S4 = {2,5,7,8,11};
+    set<int> S4 = {2,3,5,7,8,11};
     set<int> S5 = {3,6,9,12};
     set<int> S6 = {10,11};
     set<int>::iterator it;
@@ -168,7 +202,8 @@ int main(){
     F.push_back(S4);
     F.push_back(S5);
     F.push_back(S6);
-
+    ((it = find(F[1].begin(), F[1].end(), 3)) == F[1].end()) ? it : F[1].erase(it);
+    //F[1].erase(F[1].find(3));
     /*set<int> intersect;
     set_intersection(S1.begin(),S1.end(),S2.begin(),S2.end(), inserter(intersect, intersect.begin()));
     set<int> unionLessIntersect;
@@ -177,7 +212,8 @@ int main(){
     */
     set<int> x;
     x = getUniverse(F);
-
+    //auto pos = S6.find(10);
+    //cout << *pos << endl;
     //exhaustiveSearch(x,F);
     optimizedSearch(x,F);
     //greedAlgoritms(x,F);
