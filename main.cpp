@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <ctime>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 //funcion que imprime sets
@@ -148,7 +151,7 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
             if (F.at(j).size() > mayor){
-                S.clear();
+
                 S.insert(F[j].begin(),F[j].end());
                 mayor = F.at(j).size();
                     //F.erase()
@@ -156,6 +159,7 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
                 if (elem != F.end()){
                     F.erase(elem);
                 }
+            
             }
         }
         mayor= 0;
@@ -164,13 +168,49 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
             U.erase(*ite);
         }
         C.push_back(S);
+        S.clear();
     }
     imprimirVector(C);
     cout << "Fin Solucion 3" << endl << "-------------------------------------------------" << endl;
 }
 
+//Solución 4
+void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
+    cout << "Comenzando solucion 4......" << endl;
+
+    //Iterador 
+    int k= 0;
+    set<int>::iterator ite;
+    //Algortimo presentado en clases
+    set<int> U = x;
+    vector<set<int>> C;
+    set<int> S;
+    int count = 0;
+    while( U.size() > 0 && k < 1){
+        
+        for(size_t j = 0; j < F.size(); j++){
+            for (ite = F.at(j).begin(); ite != F.at(j).end(); ite++) {
+                cout << *ite << " ";
+                //if ()
+            }
+            cout <<endl;
+                }
+
+        set<int>::iterator ite;
+        for (ite = S.begin(); ite != S.end(); ite++) {
+            U.erase(*ite);
+        }
+        C.push_back(S);
+        S.clear();
+        k++;
+    }
+    imprimirVector(C);
+
+    cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
+}
+
 int main(){
-    // Set de ejemplos
+
 
     /*
     set<int> A = {1,2,3};
@@ -188,7 +228,6 @@ int main(){
     //set<int> x;
     //x = getUniverse(F);
     //exhaustiveSearch(x,F);
-
     // Set de ejemplos
     */
     set<int> S1 = {1,2,3,4,5,6};
@@ -198,6 +237,12 @@ int main(){
     set<int> S4 = {2,3,5,7,8,11};
     set<int> S5 = {3,6,9,12};
     set<int> S6 = {10,11};
+    set<int> A1 = {13,14,15,16,17,18};
+    //for(auto i=S1.begin();i!=S1.end();i++) cout << &i << endl;
+    set<int> A2= {13,14,15,16,17,18,19,20};
+    set<int> A3= {21,22};
+    set<int> A4 = {22,23,24};
+    set<int> A5 = {19,20,24};
     set<int>::iterator it;
     vector<set<int>> F;
     F.push_back(S1);
@@ -206,6 +251,10 @@ int main(){
     F.push_back(S4);
     F.push_back(S5);
     F.push_back(S6);
+    F.push_back(A1);
+    F.push_back(A2);
+    F.push_back(A3);
+    F.push_back(A4);
 
     int val = 1;
     int val_2 = 2;
@@ -217,12 +266,14 @@ int main(){
     T.insert(ptr_val);
     ptr_val = &val_3;
     T.insert(ptr_val);
+    /*
     for(auto i=T.begin();i!=T.end();i++) cout << "Direccion: " << *i << " / Valor: " << **i << endl;
     cout << "---------------------\n";
     set<int*> R;
     R.insert(&val_2);
     R.insert(&val_3);
     for(auto i=R.begin();i!=R.end();i++) cout << "Direccion: " << *i << " / Valor: " << **i << endl;
+    */
     //F[1].erase(F[1].find(3));
     /*set<int> intersect;
     set_intersection(S1.begin(),S1.end(),S2.begin(),S2.end(), inserter(intersect, intersect.begin()));
@@ -230,15 +281,23 @@ int main(){
     set<int> test = {1,2,3,4,8,9};
     set_symmetric_difference(test.begin(),test.end(),S3.begin(),S3.end(), inserter(unionLessIntersect, unionLessIntersect.begin()));
     */
-    set<int> x;
-    x = getUniverse(F);
+    
     //auto pos = S6.find(10);
     //cout << *pos << endl;
     //exhaustiveSearch(x,F);
-    optimizedSearch(x,F);
-    //greedAlgoritms(x,F);
 
-
+    set<int> x;
+    x = getUniverse(F);
+    //imprimirSets(x);
+    auto start = std::chrono::high_resolution_clock::now();
+    //optimizedSearch(x,F);
+    
+    OptimizedGreedAlgoritms(x,F);
+    //std::this_thread::sleep_for(std::chrono::seconds (3));
+    auto end = std::chrono::high_resolution_clock::now();
+    auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+    std::chrono::duration<double, std::milli> float_ms = end - start;
+    std::cout << "funcSleep() elapsed time is " << float_ms.count() << " milliseconds" << std::endl;
     /*it = s1.find(4);
     bool isIn = s1.find(3) != s1.end();
     cout << isIn << endl;
