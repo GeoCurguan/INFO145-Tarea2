@@ -94,43 +94,46 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
         //imprimirSets(inter);
         setComp.clear();
         set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
+        int mscSize = 0;
+        string solMscPrint = "";
         //setComp : Tiene los elementos que solo estan en un conjunto
-        size_t c = 0;
-        //aca deberia buscar todos los sets que tengan el elemento que solo está en un solo conjunto
-        while(c != F.size() && F[c].find(12) == F[c].end()) c++;
-        //F[c].clear();
-
-        //Si se cumple, se aplica la primera optimizacion
-        if(c != F.size()){
-            set<int>::iterator iter;
-            set<int>::iterator del;
+        for(auto k = setComp.begin(); k!= setComp.end(); k++){
+            size_t c = 0;
+            //aca deberia buscar todos los sets que tengan el elemento que solo está en un solo conjunto
+            while(c != F.size() && F[c].find(*k) == F[c].end()) c++;
+            solMscPrint = solMscPrint + "S" + to_string(c+1) + " ";
+            //imprimirSets(F[c]);
+            if(c != F.size()){
+                set<int>::iterator iter;
+                set<int>::iterator del;
             for(iter=F[c].begin(); iter!=F[c].end(); iter++){
                 x.erase(x.find(*iter));
                 for(size_t j=0;j < F.size(); j++){
                     if(j != c)((del = find(F[j].begin(), F[j].end(), *iter)) == F[j].end()) ? del : F[j].erase(del);
                 }
             }
-            //cout << "Set : \n" ;
-            //imprimirSets(x);
             F.erase(F.begin() + c);
-            //imprimirVector(F);
-
-            for(size_t j = 1; j < F.size(); j++){
-                vector<int> msc = comb(F.size(),j,x,F);
-                if (!msc.empty()){
-                    cout << "MSC encontrado de tamaño: " << msc.size() << endl;
-                    //En caso de que se quiera imprimir
-                    cout << "Los conjunto que lo forman son: " << endl;
-                    for(size_t i = 0; i != msc.size(); i++){
-                        cout << "S" << msc[i]+1 << "  ";
-                        imprimirSets(F[msc[i]]);
-                    }
-                    cout << endl;
-                    break;
+            }
+            mscSize++;
+        }
+        //Si se cumple, se aplica la primera optimizacion
+        for(size_t j = 1; j < F.size(); j++){
+            vector<int> msc = comb(F.size(),j,x,F);
+            if (!msc.empty()){
+                cout << "MSC encontrado de tamaño: " << msc.size()+mscSize << endl;
+                //En caso de que se quiera imprimir
+                for(size_t i = 0; i != msc.size(); i++){
+                    solMscPrint = solMscPrint + "S" + to_string(msc[i]+1) + " ";
+                    ///imprimirSets(F[msc[i]]);
                 }
+                if(msc.size()+mscSize < 60){
+                    cout << solMscPrint << endl;
+                }
+                //cout << endl;
+                break;
             }
         }
-        //imprimirVector(msc);
+        //
 
     }
 }
@@ -189,6 +192,7 @@ int main(){
     // Set de ejemplos
     */
     set<int> S1 = {1,2,3,4,5,6};
+    //for(auto i=S1.begin();i!=S1.end();i++) cout << &i << endl;
     set<int> S2= {5,6,8,9};
     set<int> S3= {1,4,7,10};
     set<int> S4 = {2,3,5,7,8,11};
@@ -202,7 +206,23 @@ int main(){
     F.push_back(S4);
     F.push_back(S5);
     F.push_back(S6);
-    ((it = find(F[1].begin(), F[1].end(), 3)) == F[1].end()) ? it : F[1].erase(it);
+
+    int val = 1;
+    int val_2 = 2;
+    int val_3 = 3;
+    int* ptr_val = &val;
+    set<int*> T;
+    T.insert(ptr_val);
+    ptr_val = &val_2;
+    T.insert(ptr_val);
+    ptr_val = &val_3;
+    T.insert(ptr_val);
+    for(auto i=T.begin();i!=T.end();i++) cout << "Direccion: " << *i << " / Valor: " << **i << endl;
+    cout << "---------------------\n";
+    set<int*> R;
+    R.insert(&val_2);
+    R.insert(&val_3);
+    for(auto i=R.begin();i!=R.end();i++) cout << "Direccion: " << *i << " / Valor: " << **i << endl;
     //F[1].erase(F[1].find(3));
     /*set<int> intersect;
     set_intersection(S1.begin(),S1.end(),S2.begin(),S2.end(), inserter(intersect, intersect.begin()));
