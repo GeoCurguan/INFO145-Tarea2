@@ -8,6 +8,8 @@
 #include <thread>
 using namespace std;
 
+
+void setsLectura();
 //funcion que imprime sets
 void imprimirSets(set<int> x){
     set<int>::iterator ite;
@@ -311,4 +313,40 @@ int main(){
         cout << *i << " ";
     }
     */
+}
+
+void setsLectura(){
+ string line ="";
+ string sub;
+  ifstream myfile ("lectura.txt");
+  string space_delimiter = " ";
+  vector <set<int>> F;
+  set <int> A;
+  size_t pos = 0;
+  int c = 1;
+  if (myfile.is_open())
+  {
+    while ( getline (myfile,line) && c<2 )
+    {
+      //cout << line << '\n';
+        cout<<line << "\n";
+        while ((pos = line.find(space_delimiter)) != string::npos ) {
+        sub = line.substr(0, pos);
+        cout << stoi(sub) ;
+        //cout << stoi(sub);
+        //A.insert(sub);
+        //F.push_back(A);
+        line.erase(0, pos + space_delimiter.length());
+    }
+    size_t pos = 0;
+    
+    }
+    myfile.close();
+    cout<<"en"<<endl;
+    imprimirVector(F);
+   
+  }
+
+  else cout << "Unable to open file"; 
+
 }
