@@ -300,6 +300,7 @@ int main(){
     auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
     std::chrono::duration<double, std::milli> float_ms = end - start;
     std::cout << "funcSleep() elapsed time is " << float_ms.count() << " milliseconds" << std::endl;
+    setsLectura();
     /*it = s1.find(4);
     bool isIn = s1.find(3) != s1.end();
     cout << isIn << endl;
