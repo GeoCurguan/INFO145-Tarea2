@@ -153,34 +153,35 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 3......" << endl;
     set<int> U = x;
     vector<set<int>> C;
+    set<int>::iterator ite;
     set<int> S;
     int mayor = 0;
+    size_t i = 0;
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
-            if (F.at(j).size() > mayor){
-
+            if (F.at(j).size() >= mayor){
+                S.clear();
                 S.insert(F[j].begin(),F[j].end());
                 mayor = F.at(j).size();
-                    //F.erase()
-                auto elem = F.begin() + j;
-                if (elem != F.end()){
-                    F.erase(elem);
-                }
-
+                i = j;
             }
         }
+        auto elem = F.begin() + i;
+        if (elem != F.end()){
+            F.erase(elem);
+                }
+        i = 0;
         mayor= 0;
-        set<int>::iterator ite;
+
         for (ite = S.begin(); ite != S.end(); ite++) {
             U.erase(*ite);
         }
         C.push_back(S);
-        S.clear();
+        
     }
     imprimirVector(C);
     cout << "Fin Solucion 3" << endl << "-------------------------------------------------" << endl;
 }
-
 //Solución 4
 void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 4......" << endl;
