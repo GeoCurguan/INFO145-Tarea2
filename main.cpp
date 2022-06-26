@@ -135,7 +135,7 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
                 //En caso de que se quiera imprimir
                 for(size_t i = 0; i != msc.size(); i++){
                     solMscPrint = solMscPrint + "S" + to_string(msc[i]+1) + " ";
-                    ///imprimirSets(F[msc[i]]);
+                    imprimirSets(F[msc[i]]);
                 }
                 //Print menor a 60 para no generar un flood en la consola
                 if(msc.size()+mscSize < 60){
@@ -293,7 +293,7 @@ int main(){
     */
     //auto pos = S6.find(10);
     //cout << *pos << endl;
-    vector <set<int>> F = setsLectura();
+    /*vector <set<int>> F = setsLectura();
     set<int> x;
     x = getUniverse(F);
     cout << "Universo :";
@@ -309,4 +309,48 @@ int main(){
     auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
     std::chrono::duration<double, std::milli> float_ms = end - start;
     std::cout << "funcSleep() elapsed time is " << float_ms.count() << " milliseconds" << std::endl;
+
+*/
+     srand(time(NULL));
+    int num=1+rand()%(100);
+    int cantidadSets = 1 + rand()%(100/2);
+
+
+    cout << num << endl;
+
+    
+
+    
+    /*for (size_t i = 1; i < vec.size(); i++) {
+        cout << vec.at(i) << "; ";
+    }*/
+
+    vector <set<int>> efx;
+    for (int i = 0; i <= cantidadSets; i++){
+        set<int> rands = {};
+        int tamanoSets = 1 + rand()%(100/2);
+        for(int j = 0; j <= tamanoSets; j++){
+                int numra = 1 + rand()%(num);
+                rands.insert(numra);
+        }
+        efx.push_back(rands);
+        rands.clear();
+        
+    }
+
+
+    set<int> y;
+    y = getUniverse(efx);
+
+    imprimirSets(y);
+
+    cout << "------------------------------------------------ " << endl;
+
+    imprimirVector(efx);
+
+    cout << "------------------------------------------------ " << endl;
+
+
+    //exhaustiveSearch(y, efx);
+    optimizedSearch(y, efx);
 }
