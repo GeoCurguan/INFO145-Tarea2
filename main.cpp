@@ -156,26 +156,44 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
     set<int>::iterator ite;
     set<int> S;
     int mayor = 0;
+    int countDiferencias = 0;
+    //int dif = 0;
     size_t i = 0;
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
-            if (F.at(j).size() >= mayor){
+            countDiferencias = 0;
+            for (int r : F.at(j)) {
+                if (U.count(r)){
+                   countDiferencias++;
+                }
+            }
+            if (countDiferencias > mayor){
                 S.clear();
                 S.insert(F[j].begin(),F[j].end());
-                mayor = F.at(j).size();
-                i = j;
+                mayor = countDiferencias;
+                //i = j;
+                //dif = countDiferencias;
+                //cout<< countDiferencias;
             }
+           
         }
+        //cout<<"S seleccionado, con N-difereneicas: " << dif <<endl;
+        //imprimirSets(S);
+        /*        
         auto elem = F.begin() + i;
         if (elem != F.end()){
             F.erase(elem);
                 }
+        */
+
         i = 0;
         mayor= 0;
 
         for (ite = S.begin(); ite != S.end(); ite++) {
             U.erase(*ite);
+       
         }
+        
         C.push_back(S);
         
     }
