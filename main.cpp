@@ -9,8 +9,6 @@
 #include <fstream>
 using namespace std;
 
-
-void setsLectura();
 //funcion que imprime sets
 void imprimirSets(set<int> x){
     set<int>::iterator ite;
@@ -218,6 +216,37 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
 }
 
+
+vector <set<int>> setsLectura(){
+    string line ="";
+    string sub;
+    ifstream myfile ("lectura.txt");
+    vector <set<int>> F;
+    if (myfile.is_open()){
+        while ( getline (myfile,line)){
+            int i = 0;
+            string text = "";
+            set <int> A;
+            while(i < line.length()){
+                text = "";
+                while(i < line.length() && (int)line[i] != 32 && (int)line[i] != 13){
+                    text = text + line[i];
+                    i++;
+                }
+                //cout << "-------\n";
+                if(text.length() != 0){
+                    A.insert(stoi(text));
+                }
+                i++;
+            }
+            F.push_back(A);
+            A.clear();
+        }
+        myfile.close();
+    }
+    return F;
+}
+
 int main(){
     /*
     set<int> A = {1,2,3};
@@ -236,7 +265,7 @@ int main(){
     //x = getUniverse(F);
     //exhaustiveSearch(x,F);
     // Set de ejemplos
-    */
+
     set<int> S1 = {1,2,3,4,5,6};
     set<int> S2= {5,6,8,9};
     set<int> S3= {1,4,7,10};
@@ -260,13 +289,14 @@ int main(){
     F.push_back(A2);
     F.push_back(A3);
     F.push_back(A4);
-
+    */
     //auto pos = S6.find(10);
     //cout << *pos << endl;
-
-
+    vector <set<int>> F = setsLectura();
     set<int> x;
     x = getUniverse(F);
+    cout << "Universo :";
+    imprimirSets(x);
     //imprimirSets(x);
     auto start = std::chrono::high_resolution_clock::now();
     //exhaustiveSearch(x,F);
@@ -278,38 +308,4 @@ int main(){
     auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
     std::chrono::duration<double, std::milli> float_ms = end - start;
     std::cout << "funcSleep() elapsed time is " << float_ms.count() << " milliseconds" << std::endl;
-    setsLectura();
-}
-
-void setsLectura(){
-    string line ="";
-    string sub;
-    ifstream myfile ("lectura.txt");
-    string space_delimiter = " ";
-    vector <set<int>> F;
-    set <int> A;
-    size_t pos = 0;
-    int c = 1;
-    if (myfile.is_open())
-    {
-        while ( getline (myfile,line) && c<2 )
-        {
-        //cout << line << '\n';
-            cout<<line << "\n";
-            while ((pos = line.find(space_delimiter)) != string::npos ) {
-            sub = line.substr(0, pos);
-            cout << stoi(sub) ;
-            //cout << stoi(sub);
-            //A.insert(sub);
-            //F.push_back(A);
-            line.erase(0, pos + space_delimiter.length());
-        }
-        size_t pos = 0;
-        }
-        myfile.close();
-        cout<<"en"<<endl;
-        imprimirVector(F);
-    }
-    else cout << "Unable to open file";
-
 }
