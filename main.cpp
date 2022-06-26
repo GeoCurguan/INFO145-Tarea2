@@ -200,42 +200,84 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
     imprimirVector(C);
     cout << "Fin Solucion 3" << endl << "-------------------------------------------------" << endl;
 }
-//Solución 4
 void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 4......" << endl;
-
-    //Iterador
-    int k= 0;
-    set<int>::iterator ite;
-    //Algortimo presentado en clases
     set<int> U = x;
     vector<set<int>> C;
+    set<int>::iterator ite;
     set<int> S;
-    int count = 0;
-    while( U.size() > 0 && k < 1){
 
-        for(size_t j = 0; j < F.size(); j++){
-            for (ite = F.at(j).begin(); ite != F.at(j).end(); ite++) {
-                cout << *ite << " ";
-                //if ()
-            }
-            cout <<endl;
+    //Busqueda de elementos que no esten en otros conjuntos
+    if(F.size() > 1){
+        set<int> inter;
+        set<int> setComp;
+        //Buscando los elementos que se encuentren en un solo conjunto
+        set_intersection(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(inter, inter.begin()));
+        set_symmetric_difference(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(setComp, setComp.begin()));
+        set<int> aux;
+        for (size_t i = 2; i < F.size(); i++)
+        {
+            aux.clear();
+            aux.insert(setComp.begin(),setComp.end());
+            setComp.clear();
+            set_intersection(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(inter, inter.begin()));
+            set_symmetric_difference(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(setComp, setComp.begin()));
+        }
+        setComp.clear();
+        set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
+        //Agregar conjuntos que solo tengan un elemento
+        while(setComp.size() > 0){
+            for(size_t j = 0; j < F.size(); j++){
+                for (int k : setComp){
+                    if (F.at(j).count(k)){
+                        //if (C.count(k))
+                        if ( C.size() >0 && *find(C.begin(),C.end(), F.at(j)) == F.at(j)){
+                            setComp.erase(k);
+                        }else{
+                            S.insert(F[j].begin(),F[j].end());
+                            for (ite = S.begin(); ite != S.end(); ite++) {
+                                U.erase(*ite);
+                            }
+                            C.push_back(S);
+                            S.clear();
+                            setComp.erase(k);
+                            }
+                        break;
+                        
+                    }
                 }
-
-        set<int>::iterator ite;
+            }
+        }
+    
+    }
+    int mayor = 0;
+    int countDiferencias = 0;
+    while( U.size() > 0){
+        for(size_t j = 0; j < F.size(); j++){
+            //Caso de que ningun otro conjunto lo tenga.
+            countDiferencias = 0;
+            for (int r : F.at(j)) {
+                if (U.count(r)){
+                   countDiferencias++;
+                }
+            }
+            if (countDiferencias > mayor){
+                S.clear();
+                S.insert(F[j].begin(),F[j].end());
+                mayor = countDiferencias;
+            }
+            
+        }
+        mayor= 0;
         for (ite = S.begin(); ite != S.end(); ite++) {
             U.erase(*ite);
         }
         C.push_back(S);
-        S.clear();
-        k++;
     }
     imprimirVector(C);
-
+    
     cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
 }
-
-
 vector <set<int>> setsLectura(){
     string line ="";
     string sub;
