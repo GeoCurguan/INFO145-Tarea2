@@ -278,6 +278,129 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     
     cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
 }
+
+void OptimizedGreedAlgoritmsV2(set<int> x, vector<set<int>> F){
+    cout << "Comenzando solucion 4.2......" << endl;
+
+    //Definir K
+    int k = 2;
+
+    set<int> U = x;
+    vector<set<int>> C;
+    set<int>::iterator ite;
+    set<int> S;
+    int mayor = 0;
+    int countDiferencias = 0;
+    size_t i=0;
+    
+     if(k == 1){
+    //Busqueda de elementos que no esten en otros conjuntos
+    if(F.size() > 1){
+        set<int> inter;
+        set<int> setComp;
+        //Buscando los elementos que se encuentren en un solo conjunto
+        set_intersection(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(inter, inter.begin()));
+        set_symmetric_difference(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(setComp, setComp.begin()));
+        set<int> aux;
+        for (size_t i = 2; i < F.size(); i++)
+        {
+            aux.clear();
+            aux.insert(setComp.begin(),setComp.end());
+            setComp.clear();
+            set_intersection(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(inter, inter.begin()));
+            set_symmetric_difference(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(setComp, setComp.begin()));
+        }
+        setComp.clear();
+        set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
+        //Agregar conjuntos que solo tengan un elemento
+        while(setComp.size() > 0){
+            for(size_t j = 0; j < F.size(); j++){
+                for (int k : setComp){
+                    if (F.at(j).count(k)){
+                        //if (C.count(k))
+                        if ( C.size() >0 && *find(C.begin(),C.end(), F.at(j)) == F.at(j)){
+                            setComp.erase(k);
+                        }else{
+                            S.insert(F[j].begin(),F[j].end());
+                            for (ite = S.begin(); ite != S.end(); ite++) {
+                                U.erase(*ite);
+                            }
+                            C.push_back(S);
+                            S.clear();
+                            setComp.erase(k);
+                            }
+                        break;
+                        
+                    }
+                }
+            }
+        }
+    
+    }
+
+    while( U.size() > 0){
+        for(size_t j = 0; j < F.size(); j++){
+            //Caso de que ningun otro conjunto lo tenga.
+            countDiferencias = 0;
+            for (int r : F.at(j)) {
+                if (U.count(r)){
+                   countDiferencias++;
+                }
+            }
+            if (countDiferencias > mayor){
+                S.clear();
+                S.insert(F[j].begin(),F[j].end());
+                mayor = countDiferencias;
+            }
+            
+        }
+        mayor= 0;
+        for (ite = S.begin(); ite != S.end(); ite++) {
+            U.erase(*ite);
+        }
+        C.push_back(S);
+        }
+     }
+     else {
+        cout<< "k>1" << endl;
+        set <int> AC;
+        set <int> esp;
+        set <int> all;
+        int dif = 0;
+        vector <set<int>> ELEM;
+        AC.insert(F[0].begin(), F[0].end());
+        //Aqui deberia ir otro for para encontrar la mejor pareja, hasta ahora se asume que el F[0], es el mejor pretendiente
+        // -> buscando F, tal que sea el mayor.
+        /*
+         for(size_t j = 0; j < F.size(); j++){
+            if (F.at(j).size() > mayor){
+                S.clear();
+                S.insert(F[j].begin(),F[j].end());
+                mayor = F.at(j).size();
+                    //F.erase()
+                auto elem = F.begin() + j;
+                if (elem != F.end()){
+                    F.erase(elem);
+                }
+            } 
+        }*/ 
+        for(size_t j = 1; j < F.size(); j++){
+            set_union(AC.begin(),AC.end(),F[j].begin(),F[j].end(), inserter(esp, esp.begin()));
+            //cout<<esp.size()<<endl;
+            //imprimirSets(F[j]);
+            if (esp.size() >= dif){
+                all.clear();
+                dif = esp.size();
+                all.insert(F[j].begin(),F[j].end());
+            }
+            esp.clear(); 
+        }
+        imprimirSets(all);
+     }
+    imprimirVector(C);
+    
+    cout << "Fin Solucion 4.2" << endl << "-------------------------------------------------" << endl;
+}
 vector <set<int>> setsLectura(){
     string line ="";
     string sub;
