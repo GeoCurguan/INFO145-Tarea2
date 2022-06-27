@@ -9,6 +9,13 @@
 #include <fstream>
 using namespace std;
 
+void imprimirVectorInt(vector<int> F){
+    for (size_t i = 0; i < F.size(); i++){
+        cout << F.at(i);
+    }
+    cout<<endl;   
+}
+
 //funcion que imprime sets
 void imprimirSets(set<int> x){
     set<int>::iterator ite;
@@ -55,6 +62,46 @@ vector<int> comb(int N, int K,set<int> x, vector<set<int>> F)
         A.clear();
     } while (prev_permutation(bitmask.begin(), bitmask.end()));
     return A;
+}
+
+vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
+{
+    string bitmask(K, 1);
+    bitmask.resize(N, 0);
+    vector<int> A;
+    vector <set<int>> Im;
+    vector <set<int>> MejorUnion;
+    int comparador = 0;
+    set<int> c; 
+
+    //Vector union
+    set<int> Union;
+    do {
+        set<int> s;
+        for (int i = 0; i < N; ++i)
+        {
+            if (bitmask[i]){
+                s.insert(F[i].begin(),F[i].end());
+                A.push_back(i);
+                }
+        }
+        for (size_t i = 0; i < A.size(); i++){
+            //cout<< A[i];
+            c.insert(F.at(A[i]).begin(),F.at(A[i]).end());
+            Im.push_back(c);
+            c.clear();
+        }
+        Union = unionDeConjuntos(Im);
+        if (comparador < Union.size()){
+            MejorUnion = Im;
+            comparador = Union.size();
+        }
+        Union.clear();
+        s.clear();
+        A.clear();
+        Im.clear();
+    } while (prev_permutation(bitmask.begin(), bitmask.end()));
+    return MejorUnion;
 }
 
 void exhaustiveSearch(set<int> x, vector<set<int>> F){
@@ -279,11 +326,11 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
 }
 
-void OptimizedGreedAlgoritmsV2(set<int> x, vector<set<int>> F){
+void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 4.2......" << endl;
 
     //Definir K
-    int k = 2;
+    int k = 3;
 
     set<int> U = x;
     vector<set<int>> C;
@@ -293,7 +340,18 @@ void OptimizedGreedAlgoritmsV2(set<int> x, vector<set<int>> F){
     int countDiferencias = 0;
     size_t i=0;
     
-     if(k == 1){
+    if (k> 1){
+        cout<< "k = "<<k  << endl;
+        set <int> AC;
+        set <int> esp;
+        set <int> all;
+        set <int> secAC;
+        int dif = 0;
+        vector <set<int>> ELEM;
+        size_t s = 2;
+        ELEM = comb2(F.size(),k,x,F);
+        imprimirVector(ELEM);
+    }
     //Busqueda de elementos que no esten en otros conjuntos
     if(F.size() > 1){
         set<int> inter;
@@ -360,47 +418,12 @@ void OptimizedGreedAlgoritmsV2(set<int> x, vector<set<int>> F){
         }
         C.push_back(S);
         }
-     }
-     else {
-        cout<< "k>1" << endl;
-        set <int> AC;
-        set <int> esp;
-        set <int> all;
-        int dif = 0;
-        vector <set<int>> ELEM;
-        AC.insert(F[0].begin(), F[0].end());
-        //Aqui deberia ir otro for para encontrar la mejor pareja, hasta ahora se asume que el F[0], es el mejor pretendiente
-        // -> buscando F, tal que sea el mayor.
-        /*
-         for(size_t j = 0; j < F.size(); j++){
-            if (F.at(j).size() > mayor){
-                S.clear();
-                S.insert(F[j].begin(),F[j].end());
-                mayor = F.at(j).size();
-                    //F.erase()
-                auto elem = F.begin() + j;
-                if (elem != F.end()){
-                    F.erase(elem);
-                }
-            } 
-        }*/ 
-        for(size_t j = 1; j < F.size(); j++){
-            set_union(AC.begin(),AC.end(),F[j].begin(),F[j].end(), inserter(esp, esp.begin()));
-            //cout<<esp.size()<<endl;
-            //imprimirSets(F[j]);
-            if (esp.size() >= dif){
-                all.clear();
-                dif = esp.size();
-                all.insert(F[j].begin(),F[j].end());
-            }
-            esp.clear(); 
-        }
-        imprimirSets(all);
-     }
+   
     imprimirVector(C);
     
     cout << "Fin Solucion 4.2" << endl << "-------------------------------------------------" << endl;
 }
+
 vector <set<int>> setsLectura(){
     string line ="";
     string sub;
