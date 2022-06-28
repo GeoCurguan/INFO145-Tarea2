@@ -64,6 +64,18 @@ vector<int> comb(int N, int K,set<int> x, vector<set<int>> F)
     return A;
 }
 
+set <int> unionDeConjuntos(vector<set<int>> F){
+    set <int> Union;
+    set <int> AC;
+    set <int> AC2;
+    AC.insert(F[0].begin(),F[0].end());
+    
+    for (size_t i = 1;i < F.size(); i++){
+        set_union(AC.begin(),AC.end(),F[i].begin(),F[i].end(), inserter(Union, Union.begin()));
+    }
+    return Union;
+}
+
 vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
 {
     string bitmask(K, 1);
@@ -326,12 +338,9 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
 }
 
-void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F){
+
+void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     cout << "Comenzando solucion 4.2......" << endl;
-
-    //Definir K
-    int k = 3;
-
     set<int> U = x;
     vector<set<int>> C;
     set<int>::iterator ite;
@@ -342,15 +351,16 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F){
     
     if (k> 1){
         cout<< "k = "<<k  << endl;
-        set <int> AC;
-        set <int> esp;
-        set <int> all;
-        set <int> secAC;
-        int dif = 0;
         vector <set<int>> ELEM;
-        size_t s = 2;
         ELEM = comb2(F.size(),k,x,F);
-        imprimirVector(ELEM);
+        //cout<<"Mejora n°2"<<endl;
+        //imprimirVector(ELEM);
+        set <int> conjuntosUnidos = unionDeConjuntos(ELEM);
+        for (ite = conjuntosUnidos.begin(); ite != conjuntosUnidos.end(); ite++) {
+            U.erase(*ite);
+        }
+        C = ELEM;
+        //cout<<"Fin mejora n°2"<<endl;
     }
     //Busqueda de elementos que no esten en otros conjuntos
     if(F.size() > 1){
