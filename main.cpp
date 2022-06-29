@@ -13,7 +13,7 @@ void imprimirVectorInt(vector<int> F){
     for (size_t i = 0; i < F.size(); i++){
         cout << F.at(i);
     }
-    cout<<endl;   
+    cout<<endl;
 }
 
 //funcion que imprime sets
@@ -69,7 +69,7 @@ set <int> unionDeConjuntos(vector<set<int>> F){
     set <int> AC;
     set <int> AC2;
     AC.insert(F[0].begin(),F[0].end());
-    
+
     for (size_t i = 1;i < F.size(); i++){
         set_union(AC.begin(),AC.end(),F[i].begin(),F[i].end(), inserter(Union, Union.begin()));
     }
@@ -84,7 +84,7 @@ vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
     vector <set<int>> Im;
     vector <set<int>> MejorUnion;
     int comparador = 0;
-    set<int> c; 
+    set<int> c;
 
     //Vector union
     set<int> Union;
@@ -140,6 +140,25 @@ void exhaustiveSearch(set<int> x, vector<set<int>> F){
     }
     cout << "Fin Solucion 1" << endl << "-------------------------------------------------" << endl;
 }
+
+set<int> getIntersection(set<int> x, vector<set<int>> F){
+    set<int> inter;
+    set<int> setComp;
+    //Buscando los elementos que se encuentren en un solo conjunto
+    set_intersection(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(inter, inter.begin()));
+    set_symmetric_difference(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(setComp, setComp.begin()));
+    set<int> aux;
+    for (size_t i = 2; i < F.size(); i++){
+        aux.clear();
+        aux.insert(setComp.begin(),setComp.end());
+        setComp.clear();
+        set_intersection(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(inter, inter.begin()));
+        set_symmetric_difference(aux.begin(),aux.end(),F[i].begin(),F[i].end(), inserter(setComp, setComp.begin()));
+    }
+    setComp.clear();
+    set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
+}
+
 //Solucion 2
 void optimizedSearch(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 2......" << endl;
@@ -167,10 +186,6 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
             size_t c = 0;
             //aca deberia buscar todos los sets que tengan el elemento que solo está en un solo conjunto
             while(c != F.size() && F[c].find(*k) == F[c].end()) c++;
-            //imprimirSets(F[c]);
-            //cout << c << endl;
-            //cout << solMscPrint << endl;
-            //imprimirSets(F[c]);
             if(c != F.size()){
                 solMscPrint = solMscPrint + "S" + to_string(c+1) + " ";
                 //cout << c+1 << "/" << setSol << endl;
@@ -182,7 +197,8 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
                         if(j != c)((del = find(F[j].begin(), F[j].end(), *iter)) == F[j].end()) ? del : F[j].erase(del);
                     }
                 }
-                F[c].clear();
+                F.erase(F.begin() + c);
+                //F[c].clear();
                 mscSize++;
             }
         }
@@ -191,16 +207,14 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
             //Si entra al if, es porque encontro un MSC
             if (!msc.empty()){
                 cout << "MSC encontrado de tamaño: " << msc.size()+mscSize << endl;
-                //En caso de que se quiera imprimir
-                for(size_t i = 0; i != msc.size(); i++){
-                    solMscPrint = solMscPrint + "S" + to_string(msc[i]+1) + " ";
-                    imprimirSets(F[msc[i]]);
-                }
                 //Print menor a 60 para no generar un flood en la consola
-                if(msc.size()+mscSize < 60){
+                if(msc.size() + mscSize < 60){
+                    for(size_t i = 0; i != msc.size(); i++){
+                        solMscPrint = solMscPrint + "S" + to_string(msc[i]+1) + " ";
+                        //imprimirSets(F[msc[i]]);
+                    }
                     cout << solMscPrint << endl;
                 }
-                //Como encontro un msc, no tiene sentido seguir buscando...
                 break;
             }
         }
@@ -223,7 +237,7 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
             countDiferencias = 0;
             for (int r : F.at(j)) {
                 if (U.count(r)){
-                   countDiferencias++;
+                    countDiferencias++;
                 }
             }
             if (countDiferencias > mayor){
@@ -234,11 +248,10 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
                 //dif = countDiferencias;
                 //cout<< countDiferencias;
             }
-           
         }
         //cout<<"S seleccionado, con N-difereneicas: " << dif <<endl;
         //imprimirSets(S);
-        /*        
+        /*
         auto elem = F.begin() + i;
         if (elem != F.end()){
             F.erase(elem);
@@ -250,22 +263,22 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
 
         for (ite = S.begin(); ite != S.end(); ite++) {
             U.erase(*ite);
-       
+
         }
-        
+
         C.push_back(S);
-        
+
     }
     imprimirVector(C);
     cout << "Fin Solucion 3" << endl << "-------------------------------------------------" << endl;
 }
+
 void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 4......" << endl;
     set<int> U = x;
     vector<set<int>> C;
     set<int>::iterator ite;
     set<int> S;
-
     //Busqueda de elementos que no esten en otros conjuntos
     if(F.size() > 1){
         set<int> inter;
@@ -302,12 +315,12 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
                             setComp.erase(k);
                             }
                         break;
-                        
+
                     }
                 }
             }
         }
-    
+
     }
     int mayor = 0;
     int countDiferencias = 0;
@@ -325,7 +338,7 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
                 S.insert(F[j].begin(),F[j].end());
                 mayor = countDiferencias;
             }
-            
+
         }
         mayor= 0;
         for (ite = S.begin(); ite != S.end(); ite++) {
@@ -334,7 +347,7 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
         C.push_back(S);
     }
     imprimirVector(C);
-    
+
     cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
 }
 
@@ -348,7 +361,7 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     int mayor = 0;
     int countDiferencias = 0;
     size_t i=0;
-    
+
     if (k> 1){
         cout<< "k = "<<k  << endl;
         vector <set<int>> ELEM;
@@ -398,12 +411,12 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
                             setComp.erase(k);
                             }
                         break;
-                        
+
                     }
                 }
             }
         }
-    
+
     }
 
     while( U.size() > 0){
@@ -420,7 +433,7 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
                 S.insert(F[j].begin(),F[j].end());
                 mayor = countDiferencias;
             }
-            
+
         }
         mayor= 0;
         for (ite = S.begin(); ite != S.end(); ite++) {
@@ -428,16 +441,16 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
         }
         C.push_back(S);
         }
-   
+
     imprimirVector(C);
-    
+
     cout << "Fin Solucion 4.2" << endl << "-------------------------------------------------" << endl;
 }
 
-vector <set<int>> setsLectura(){
+vector <set<int>> readFile(){
     string line ="";
     string sub;
-    ifstream myfile ("lectura.txt");
+    ifstream myfile ("pmed1.txt");
     vector <set<int>> F;
     if (myfile.is_open()){
         while ( getline (myfile,line)){
@@ -450,7 +463,6 @@ vector <set<int>> setsLectura(){
                     text = text + line[i];
                     i++;
                 }
-                //cout << "-------\n";
                 if(text.length() != 0){
                     A.insert(stoi(text));
                 }
@@ -482,7 +494,6 @@ int main(){
     //x = getUniverse(F);
     //exhaustiveSearch(x,F);
     // Set de ejemplos
-
     set<int> S1 = {1,2,3,4,5,6};
     set<int> S2= {5,6,8,9};
     set<int> S3= {1,4,7,10};
@@ -525,21 +536,24 @@ int main(){
     auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
     std::chrono::duration<double, std::milli> float_ms = end - start;
     std::cout << "funcSleep() elapsed time is " << float_ms.count() << " milliseconds" << std::endl;
+    */
+    vector <set<int>> F = readFile();
+    set<int> X = getUniverse(F);
+    //imprimirSets(X);
+    //exhaustiveSearch(X,F);
+    optimizedSearch(X,F);
+    //greedAlgoritms(X,F);
 
-*/
-     srand(time(NULL));
+    /*
+    srand(time(NULL));
     int num=1+rand()%(100);
     int cantidadSets = 1 + rand()%(100/2);
 
-
     cout << num << endl;
 
-    
-
-    
-    /*for (size_t i = 1; i < vec.size(); i++) {
-        cout << vec.at(i) << "; ";
-    }*/
+    //for (size_t i = 1; i < vec.size(); i++) {
+    //    cout << vec.at(i) << "; ";
+    //}
 
     vector <set<int>> efx;
     for (int i = 0; i <= cantidadSets; i++){
@@ -551,7 +565,7 @@ int main(){
         }
         efx.push_back(rands);
         rands.clear();
-        
+
     }
 
 
@@ -568,5 +582,5 @@ int main(){
 
 
     //exhaustiveSearch(y, efx);
-    optimizedSearch(y, efx);
+    optimizedSearch(y, efx);*/
 }
