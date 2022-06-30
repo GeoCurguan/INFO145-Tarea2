@@ -26,11 +26,15 @@ void imprimirSets(set<int> x){
 }
 void imprimirVector(vector<set<int>> F){
     set<int> element;
+    set<int>::iterator ite;
+    if (F.size() < 10){
     for (size_t i = 0; i < F.size(); i++){
         element.insert(F.at(i).begin(),F.at(i).end());
         imprimirSets(element);
         element.clear();
+        }
     }
+    cout<< "Tamaño: "<<F.size()<<endl ; 
 }
 
 //Funcion que retorna el universo de elementos
@@ -76,45 +80,6 @@ set <int> unionDeConjuntos(vector<set<int>> F){
     return Union;
 }
 
-vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
-{
-    string bitmask(K, 1);
-    bitmask.resize(N, 0);
-    vector<int> A;
-    vector <set<int>> Im;
-    vector <set<int>> MejorUnion;
-    int comparador = 0;
-    set<int> c;
-
-    //Vector union
-    set<int> Union;
-    do {
-        set<int> s;
-        for (int i = 0; i < N; ++i)
-        {
-            if (bitmask[i]){
-                s.insert(F[i].begin(),F[i].end());
-                A.push_back(i);
-                }
-        }
-        for (size_t i = 0; i < A.size(); i++){
-            //cout<< A[i];
-            c.insert(F.at(A[i]).begin(),F.at(A[i]).end());
-            Im.push_back(c);
-            c.clear();
-        }
-        Union = unionDeConjuntos(Im);
-        if (comparador < Union.size()){
-            MejorUnion = Im;
-            comparador = Union.size();
-        }
-        Union.clear();
-        s.clear();
-        A.clear();
-        Im.clear();
-    } while (prev_permutation(bitmask.begin(), bitmask.end()));
-    return MejorUnion;
-}
 
 void exhaustiveSearch(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 1......" << endl;
@@ -221,7 +186,7 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
     }
 }
 
-//Solucion 3
+//Solucion 3 -> algoritmo implementado del pseudocodigo
 void greedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 3......" << endl;
     set<int> U = x;
@@ -230,60 +195,43 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
     set<int> S;
     int mayor = 0;
     int countDiferencias = 0;
-    //int dif = 0;
     size_t i = 0;
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
             countDiferencias = 0;
             for (int r : F.at(j)) {
                 if (U.count(r)){
-                    countDiferencias++;
+                   countDiferencias++;
                 }
             }
             if (countDiferencias > mayor){
                 S.clear();
                 S.insert(F[j].begin(),F[j].end());
                 mayor = countDiferencias;
-                //i = j;
-                //dif = countDiferencias;
-                //cout<< countDiferencias;
-            }
+            }       
         }
-        //cout<<"S seleccionado, con N-difereneicas: " << dif <<endl;
-        //imprimirSets(S);
-        /*
-        auto elem = F.begin() + i;
-        if (elem != F.end()){
-            F.erase(elem);
-                }
-        */
-
         i = 0;
         mayor= 0;
-
         for (ite = S.begin(); ite != S.end(); ite++) {
             U.erase(*ite);
-
         }
-
         C.push_back(S);
-
     }
     imprimirVector(C);
     cout << "Fin Solucion 3" << endl << "-------------------------------------------------" << endl;
 }
 
+//Solución 4 -> Mejora n°1 
 void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 4......" << endl;
     set<int> U = x;
     vector<set<int>> C;
     set<int>::iterator ite;
     set<int> S;
-    //Busqueda de elementos que no esten en otros conjuntos
+    // Buscar elementos que solo esten en un conjunto
     if(F.size() > 1){
         set<int> inter;
         set<int> setComp;
-        //Buscando los elementos que se encuentren en un solo conjunto
         set_intersection(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(inter, inter.begin()));
         set_symmetric_difference(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(setComp, setComp.begin()));
         set<int> aux;
@@ -297,12 +245,11 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
         }
         setComp.clear();
         set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
-        //Agregar conjuntos que solo tengan un elemento
+        //Agregar los conjuntos que tengan un elemento
         while(setComp.size() > 0){
             for(size_t j = 0; j < F.size(); j++){
                 for (int k : setComp){
                     if (F.at(j).count(k)){
-                        //if (C.count(k))
                         if ( C.size() >0 && *find(C.begin(),C.end(), F.at(j)) == F.at(j)){
                             setComp.erase(k);
                         }else{
@@ -315,18 +262,17 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
                             setComp.erase(k);
                             }
                         break;
-
+                        
                     }
                 }
             }
         }
-
+    
     }
     int mayor = 0;
     int countDiferencias = 0;
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
-            //Caso de que ningun otro conjunto lo tenga.
             countDiferencias = 0;
             for (int r : F.at(j)) {
                 if (U.count(r)){
@@ -338,7 +284,7 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
                 S.insert(F[j].begin(),F[j].end());
                 mayor = countDiferencias;
             }
-
+            
         }
         mayor= 0;
         for (ite = S.begin(); ite != S.end(); ite++) {
@@ -347,11 +293,48 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
         C.push_back(S);
     }
     imprimirVector(C);
-
+    
     cout << "Fin Solucion 4" << endl << "-------------------------------------------------" << endl;
 }
 
-
+//Combinación de k-conjuntos, y que ademas escoge la mejor combinación de estos k-conjuntos
+vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
+{
+    string bitmask(K, 1);
+    bitmask.resize(N, 0);
+    vector<int> A;
+    vector <set<int>> Im;
+    vector <set<int>> MejorUnion;
+    int comparador = 0;
+    set<int> c; 
+    set<int> Union;
+    do {
+        set<int> s;
+        for (int i = 0; i < N; ++i)
+        {
+            if (bitmask[i]){
+                s.insert(F[i].begin(),F[i].end());
+                A.push_back(i);
+                }
+        }
+        for (size_t i = 0; i < A.size(); i++){
+            c.insert(F.at(A[i]).begin(),F.at(A[i]).end());
+            Im.push_back(c);
+            c.clear();
+        }
+        Union = unionDeConjuntos(Im);
+        if (comparador < Union.size()){
+            MejorUnion = Im;
+            comparador = Union.size();
+        }
+        Union.clear();
+        s.clear();
+        A.clear();
+        Im.clear();
+    } while (prev_permutation(bitmask.begin(), bitmask.end()));
+    return MejorUnion;
+}
+// Función que realiza la mejora (1) y (2) del gready algorithms
 void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     cout << "Comenzando solucion 4.2......" << endl;
     set<int> U = x;
@@ -361,25 +344,20 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     int mayor = 0;
     int countDiferencias = 0;
     size_t i=0;
-
+    
     if (k> 1){
         cout<< "k = "<<k  << endl;
         vector <set<int>> ELEM;
         ELEM = comb2(F.size(),k,x,F);
-        //cout<<"Mejora n°2"<<endl;
-        //imprimirVector(ELEM);
         set <int> conjuntosUnidos = unionDeConjuntos(ELEM);
         for (ite = conjuntosUnidos.begin(); ite != conjuntosUnidos.end(); ite++) {
             U.erase(*ite);
         }
         C = ELEM;
-        //cout<<"Fin mejora n°2"<<endl;
     }
-    //Busqueda de elementos que no esten en otros conjuntos
     if(F.size() > 1){
         set<int> inter;
         set<int> setComp;
-        //Buscando los elementos que se encuentren en un solo conjunto
         set_intersection(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(inter, inter.begin()));
         set_symmetric_difference(F[0].begin(),F[0].end(),F[1].begin(),F[1].end(), inserter(setComp, setComp.begin()));
         set<int> aux;
@@ -393,12 +371,10 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
         }
         setComp.clear();
         set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
-        //Agregar conjuntos que solo tengan un elemento
         while(setComp.size() > 0){
             for(size_t j = 0; j < F.size(); j++){
                 for (int k : setComp){
                     if (F.at(j).count(k)){
-                        //if (C.count(k))
                         if ( C.size() >0 && *find(C.begin(),C.end(), F.at(j)) == F.at(j)){
                             setComp.erase(k);
                         }else{
@@ -411,17 +387,16 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
                             setComp.erase(k);
                             }
                         break;
-
+                        
                     }
                 }
             }
         }
-
+    
     }
 
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
-            //Caso de que ningun otro conjunto lo tenga.
             countDiferencias = 0;
             for (int r : F.at(j)) {
                 if (U.count(r)){
@@ -433,7 +408,6 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
                 S.insert(F[j].begin(),F[j].end());
                 mayor = countDiferencias;
             }
-
         }
         mayor= 0;
         for (ite = S.begin(); ite != S.end(); ite++) {
@@ -441,9 +415,7 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
         }
         C.push_back(S);
         }
-
     imprimirVector(C);
-
     cout << "Fin Solucion 4.2" << endl << "-------------------------------------------------" << endl;
 }
 
