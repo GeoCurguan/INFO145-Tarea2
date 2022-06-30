@@ -408,6 +408,63 @@ vector <set<int>> readFile(string file){
     return F;
 }
 
+vector <set<int>> randSets(){
+    vector <set<int>> efx;
+    srand(time(NULL));
+    int num=1+rand()%(100);
+    int cantidadSets = 1 + rand()%(100/2);
+    int probElemUnic = (cantidadSets * 0.05);
+
+    if(probElemUnic < 1){
+        probElemUnic = probElemUnic + 1;
+    }
+
+    //cout  << cantidadSets << "; " << probElemUnic << endl;
+
+    int c = 0;
+    int elecSet = 0 + rand()%(cantidadSets);
+    int insernum = 1 + rand()%(num);
+    vector <int> elemunic;
+    //cout << insernum << endl;
+    //cout << "elemento unico: " << insernum << endl;
+    for (int i = 0; i <= cantidadSets; i++){
+        set<int> rands = {};
+        int tamanoSets = 1 + rand()%(100/2);  //FALTA CONTROLAR DEL TODO LA CANTIDAD DE ELEMENTOS UNICOS QUE TIENE CADA SET
+        for(int j = 0; j <= tamanoSets; j++){
+                int numra = 1 + rand()%(num);
+                //cout << numra << endl;
+                //cout << elecSet << endl;
+                if((c <= probElemUnic) && (elecSet == i)){
+                    for(size_t i = 0; i != efx.size(); i++){
+                        for(auto itr = efx[i].begin(); itr != efx[i].end(); itr++){
+                            if(*itr == insernum){
+                                efx[i].erase(insernum);
+                            }
+                    }
+                            /*if(efx[i].find(insernum) == efx[i].end()){
+                            efx[i].erase(insernum);
+                            imprimirSets(efx[i]);
+                            }*/
+                    }
+                    rands.insert(insernum);
+                    elemunic.push_back(insernum);
+                    elecSet = i + rand()%(cantidadSets);
+                    insernum = 1 + rand()%(num);
+                    //cout << "nuevo elemento unico: " << insernum << endl;
+                        c = c + 1;
+                }
+                else if(numra != insernum){
+                    if(elemunic.size() > 0 && !(find(elemunic.begin(), elemunic.end(), numra) != elemunic.end())){
+                        rands.insert(numra);
+                    }
+                }
+        }
+        efx.push_back(rands);
+        rands.clear();
+    }
+    return efx;
+}
+
 int main(int argc, char **argv){
     if(argc != 3){
 	    cout << " Debe ejecutarse como ./tarea e k (e=0->Tiempo de Busqueda, e=1->Tamaño de solucion)" << endl;
@@ -473,11 +530,41 @@ int main(int argc, char **argv){
         cout << endl << "-------------------------------------------------" << endl;
 
     }else{
+        vector <set<int>> F = randSets();
+        set<int> X = getUniverse(F);
 
+        auto start = std::chrono::high_resolution_clock::now();
+        exhaustiveSearch(X,F);
+        auto end = std::chrono::high_resolution_clock::now();
+        auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+        std::chrono::duration<double, std::milli> float_ms = end - start;
+        cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count() << " milliseconds" << endl;
+        cout << endl << "-------------------------------------------------" << endl;
+
+        start = std::chrono::high_resolution_clock::now();
+        optimizedSearch(X,F);
+        end = std::chrono::high_resolution_clock::now();
+        float_ms = end - start;
+        cout << "Tiempo de busqueda exhaustiva optimizada:  " << float_ms.count() << " milliseconds";
+        cout << endl << "-------------------------------------------------" << endl;
+
+        start = std::chrono::high_resolution_clock::now();
+        greedAlgoritms(X,F);
+        end = std::chrono::high_resolution_clock::now();
+        float_ms = end - start;
+        cout << "Tiempo de busqueda algoritmo greedy clasico:  " << float_ms.count() << " milliseconds";
+        cout << endl << "-------------------------------------------------" << endl;
+
+        start = std::chrono::high_resolution_clock::now();
+        OptimizedGreedAlgoritmsV3(X,F,k);
+        end = std::chrono::high_resolution_clock::now();
+        float_ms = end - start;
+        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milliseconds";
+        cout << endl << "-------------------------------------------------" << endl;
     }
     //optimizedSearch(X,F);
 
-    
+
    srand(time(NULL));
     int num=1+rand()%(100);
     int cantidadSets = 1 + rand()%(100/2);
@@ -489,24 +576,24 @@ int main(int argc, char **argv){
 
     cout  << cantidadSets << "; " << probElemUnic << endl;
 
-    
+
     int c = 0;
     int elecSet = 0 + rand()%(cantidadSets);
     int insernum = 1 + rand()%(num);
-    
+
     vector <int> elemunic;
-    
+
 
     //cout << insernum << endl;
 
     cout << "elemento unico: " << insernum << endl;
     //cout << num << endl;
-            
-    
+
+
     vector <set<int>> efx;
     for (int i = 0; i <= cantidadSets; i++){
         set<int> rands = {};
-        int tamanoSets = 1 + rand()%(100/2);  //FALTA CONTROLAR DEL TODO LA CANTIDAD DE ELEMENTOS UNICOS QUE TIENE CADA SET ACUERDATE RE WEON  
+        int tamanoSets = 1 + rand()%(100/2);  //FALTA CONTROLAR DEL TODO LA CANTIDAD DE ELEMENTOS UNICOS QUE TIENE CADA SET ACUERDATE RE WEON
         for(int j = 0; j <= tamanoSets; j++){
                 int numra = 1 + rand()%(num);
                 //cout << numra << endl;
@@ -517,13 +604,13 @@ int main(int argc, char **argv){
                             if(*itr == insernum){
                                 efx[i].erase(insernum);
                             }
-                    } 
+                    }
                     }
                     rands.insert(insernum);
                     elemunic.push_back(insernum);
-                    elecSet = i + rand()%(cantidadSets); 
+                    elecSet = i + rand()%(cantidadSets);
                     insernum = 1 + rand()%(num);
-                    
+
                     cout << "nuevo elemento unico: " << insernum << endl;
                      c = c + 1;
                 }
@@ -533,13 +620,13 @@ int main(int argc, char **argv){
                     }
                 }
         }
-        
+
         efx.push_back(rands);
         rands.clear();
-        
+
     }
 
-    
+
 
 
     set<int> y;
