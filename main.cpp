@@ -310,7 +310,7 @@ vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
 
 // Función que realiza la mejora (1) y (2) del gready algorithms
 void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
-    cout << "Comenzando solucion 4.2......" << endl;
+    cout << "Comenzando solucion 4......" << endl;
     set<int> U = x;
     vector<set<int>> C;
     set<int>::iterator ite;
@@ -354,7 +354,6 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
         }
 
     }
-
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
             countDiferencias = 0;
@@ -418,9 +417,7 @@ vector <set<int>> randSets(){
     if(probElemUnic < 1){
         probElemUnic = probElemUnic + 1;
     }
-
     //cout  << cantidadSets << "; " << probElemUnic << endl;
-
     int c = 0;
     int elecSet = 0 + rand()%(cantidadSets);
     int insernum = 1 + rand()%(num);
@@ -562,85 +559,4 @@ int main(int argc, char **argv){
         cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milliseconds";
         cout << endl << "-------------------------------------------------" << endl;
     }
-    //optimizedSearch(X,F);
-
-
-   srand(time(NULL));
-    int num=1+rand()%(100);
-    int cantidadSets = 1 + rand()%(100/2);
-    int probElemUnic = (cantidadSets * 0.05);
-
-    if(probElemUnic < 1){
-        probElemUnic = probElemUnic + 1;
-    }
-
-    cout  << cantidadSets << "; " << probElemUnic << endl;
-
-
-    int c = 0;
-    int elecSet = 0 + rand()%(cantidadSets);
-    int insernum = 1 + rand()%(num);
-
-    vector <int> elemunic;
-
-
-    //cout << insernum << endl;
-
-    cout << "elemento unico: " << insernum << endl;
-    //cout << num << endl;
-
-
-    vector <set<int>> efx;
-    for (int i = 0; i <= cantidadSets; i++){
-        set<int> rands = {};
-        int tamanoSets = 1 + rand()%(100/2);  //FALTA CONTROLAR DEL TODO LA CANTIDAD DE ELEMENTOS UNICOS QUE TIENE CADA SET ACUERDATE RE WEON
-        for(int j = 0; j <= tamanoSets; j++){
-                int numra = 1 + rand()%(num);
-                //cout << numra << endl;
-                //cout << elecSet << endl;
-                if((c <= probElemUnic) && (elecSet == i)){
-                    for(size_t i = 0; i != efx.size(); i++){
-                        for(auto itr = efx[i].begin(); itr != efx[i].end(); itr++){
-                            if(*itr == insernum){
-                                efx[i].erase(insernum);
-                            }
-                    }
-                    }
-                    rands.insert(insernum);
-                    elemunic.push_back(insernum);
-                    elecSet = i + rand()%(cantidadSets);
-                    insernum = 1 + rand()%(num);
-
-                    cout << "nuevo elemento unico: " << insernum << endl;
-                     c = c + 1;
-                }
-                else if(numra != insernum){
-                    if(!(find(elemunic.begin(), elemunic.end(), numra) != elemunic.end())){
-                            rands.insert(numra);
-                    }
-                }
-        }
-
-        efx.push_back(rands);
-        rands.clear();
-
-    }
-
-
-
-
-    set<int> y;
-    y = getUniverse(efx);
-
-    imprimirSets(y);
-
-    cout << "------------------------------------------------ " << endl;
-
-    imprimirVector(efx);
-
-    cout << "------------------------------------------------ " << endl;
-
-
-    //exhaustiveSearch(y, efx)
-    optimizedSearch(y, efx);
 }
