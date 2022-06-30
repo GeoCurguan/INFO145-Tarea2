@@ -252,10 +252,6 @@ vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
     return MejorUnion;
 }
 
-vector<set<int>> test(int k, set<int> x, vector<set<int>> F){
-
-}
-
 // Función que realiza la mejora (1) y (2) del gready algorithms
 void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     cout << "Comenzando solucion 4......" << endl;
