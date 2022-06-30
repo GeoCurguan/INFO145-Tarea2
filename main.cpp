@@ -9,6 +9,7 @@
 #include <fstream>
 using namespace std;
 
+/*Funciones para imprimir...*/
 void imprimirVectorInt(vector<int> F){
     for (size_t i = 0; i < F.size(); i++){
         cout << F.at(i);
@@ -37,7 +38,7 @@ void imprimirVector(vector<set<int>> F){
     cout<< "Tamaño: "<<F.size()<<endl ;
 }
 
-//Funcion que retorna el universo de elementos
+/*Funcion que retorna el universo de elementos*/
 set<int> getUniverse(vector<set<int>> F){
     set<int> x(F[0]);
     for(size_t i = 1; i<F.size(); i++){
@@ -46,7 +47,7 @@ set<int> getUniverse(vector<set<int>> F){
     return x;
 }
 
-//Solucion 1
+/*Funcion de combinatoria (extraida de un foro) modificada para sets*/
 vector<int> comb(int N, int K,set<int> x, vector<set<int>> F)
 {
     string bitmask(K, 1);
@@ -68,6 +69,7 @@ vector<int> comb(int N, int K,set<int> x, vector<set<int>> F)
     return A;
 }
 
+/*Solucion 1*/
 void exhaustiveSearch(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 1......" << endl;
     int mscSize = F.size();
@@ -93,6 +95,8 @@ void exhaustiveSearch(set<int> x, vector<set<int>> F){
     cout << "Fin Solucion 1" << endl;
 }
 
+/*Solucion 2*/
+/*Funcion que consigue elementos unicos (Optimizacion 1)*/
 set<int> getIntersection(set<int> x, vector<set<int>> F){
     set<int> inter;
     set<int> setComp;
@@ -125,7 +129,6 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
             while(c != F.size() && F[c].find(*k) == F[c].end()) c++;
             if(c != F.size()){
                 solMscPrint = solMscPrint + "S" + to_string(c+1) + " ";
-                //cout << c+1 << "/" << setSol << endl;
                 set<int>::iterator iter;
                 set<int>::iterator del;
                 for(iter=F[c].begin(); iter!=F[c].end(); iter++){
@@ -163,7 +166,7 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
     }
     cout << "Fin Solucion 2" << endl;
 }
-//Solucion 3 -> algoritmo implementado del pseudocodigo
+/*Solucion 3 -> Algoritmo implementado del pseudocodigo*/
 void greedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 3......" << endl;
     set<int> U = x;
@@ -198,67 +201,7 @@ void greedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Fin Solucion 3" << endl;
 }
 
-//Solución 4 -> Mejora n°1
-
-/*
-void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
-    cout << "Comenzando solucion 4......" << endl;
-    set<int> U = x;
-    vector<set<int>> C;
-    set<int>::iterator ite;
-    set<int> S;
-    // Buscar elementos que solo esten en un conjunto
-    if(F.size() > 1){
-        set<int> setComp = getIntersection(x,F);
-        //Agregar los conjuntos que tengan un elemento
-        while(setComp.size() > 0){
-            for(size_t j = 0; j < F.size(); j++){
-                for (int k : setComp){
-                    if (F.at(j).count(k)){
-                        if ( C.size() >0 && *find(C.begin(),C.end(), F.at(j)) == F.at(j)){
-                            setComp.erase(k);
-                        }else{
-                            S.insert(F[j].begin(),F[j].end());
-                            for (ite = S.begin(); ite != S.end(); ite++) {
-                                U.erase(*ite);
-                            }
-                            C.push_back(S);
-                            S.clear();
-                            setComp.erase(k);
-                            }
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    int mayor = 0;
-    int countDiferencias = 0;
-    while( U.size() > 0){
-        for(size_t j = 0; j < F.size(); j++){
-            countDiferencias = 0;
-            for (int r : F.at(j)) {
-                if (U.count(r)){
-                    countDiferencias++;
-                }
-            }
-            if (countDiferencias > mayor){
-                S.clear();
-                S.insert(F[j].begin(),F[j].end());
-                mayor = countDiferencias;
-            }
-        }
-        mayor= 0;
-        for (ite = S.begin(); ite != S.end(); ite++) {
-            U.erase(*ite);
-        }
-        C.push_back(S);
-    }
-    imprimirVector(C);
-    cout << "Fin Solucion 4" << endl;
-}
-*/
-
+/*Solucion 4*/
 set <int> unionDeConjuntos(vector<set<int>> F){
     set <int> Union;
     set <int> AC;
@@ -309,6 +252,9 @@ vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
     return MejorUnion;
 }
 
+vector<set<int>> test(int k, set<int> x, vector<set<int>> F){
+
+}
 
 // Función que realiza la mejora (1) y (2) del gready algorithms
 void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
@@ -358,7 +304,6 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
                 }
             }
         }
-
     }
     while( U.size() > 0){
         for(size_t j = 0; j < F.size(); j++){
@@ -418,7 +363,7 @@ vector <set<int>> randSets(){
     srand(time(NULL));
     int num=1+rand()%(100);
     int cantidadSets = 1 + rand()%(100/2);
-    cout<< "candidad: "<<cantidadSets <<endl;
+    cout<< "cantidad: "<<cantidadSets <<endl;
     int probElemUnic = (cantidadSets * 0.05);
 
     if(probElemUnic < 1){
@@ -486,89 +431,101 @@ int main(int argc, char **argv){
         return EXIT_FAILURE;
     }
     if(ent == 0){
+        cout << "Comenzando ejecución con conjuntos a partir de un archivo..." << endl;
+        cout << "-----------------------------------------------------------" << endl;
         vector <set<int>> F = readFile("pmed1.txt");
         set<int> X = getUniverse(F);
-
-        auto start = std::chrono::high_resolution_clock::now();
+        auto start = chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-        std::chrono::duration<double, std::milli> float_ms = end - start;
-        cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count() << " milliseconds" << endl;
-        cout << endl << "-------------------------------------------------" << endl;
+        auto end = chrono::high_resolution_clock::now();
+        auto int_s = chrono::duration_cast<chrono::seconds>(end - start);
+        chrono::duration<double, milli> float_ms = end - start;
+        if(float_ms.count() > 5000) {
+            cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count()*0.001 << " segundos" << endl;
+        }else{
+            cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count() << " milisegundos" << endl;
+        }
+        cout << endl << "-----------------------------------------------------------" << endl;
 
-        start = std::chrono::high_resolution_clock::now();
+        start = chrono::high_resolution_clock::now();
         optimizedSearch(X,F);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda exhaustiva optimizada:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda exhaustiva optimizada:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
 
-        start = std::chrono::high_resolution_clock::now();
+        start = chrono::high_resolution_clock::now();
         greedAlgoritms(X,F);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy clasico:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda algoritmo greedy clasico:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
 
-        start = std::chrono::high_resolution_clock::now();
+        start = chrono::high_resolution_clock::now();
         OptimizedGreedAlgoritmsV3(X,F,k);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
 
         F = readFile("pmed38.txt");
         X = getUniverse(F);
-        cout << "Iniciando experimentacion con greedy para más conjuntos..." << endl;
-        start = std::chrono::high_resolution_clock::now();
+        cout << "---Iniciando experimentacion greedy para más conjuntos..---" << endl;
+        cout << "-----------------------------------------------------------" << endl;
+        start = chrono::high_resolution_clock::now();
         greedAlgoritms(X,F);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy clasico:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda algoritmo greedy clasico:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
 
-        start = std::chrono::high_resolution_clock::now();
+        start = chrono::high_resolution_clock::now();
         OptimizedGreedAlgoritmsV3(X,F,k);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
 
     }else{
+        cout << "Comenzando ejecución con conjuntos aleatorios..." << endl;
+        cout << endl << "-----------------------------------------------------------" << endl;
         vector <set<int>> F = randSets();
         while (F.size() < 0){
             vector <set<int>> F = randSets();
         }
         set<int> X = getUniverse(F);
 
-        auto start = std::chrono::high_resolution_clock::now();
+        auto start = chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
-        auto end = std::chrono::high_resolution_clock::now();
-        auto int_s = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-        std::chrono::duration<double, std::milli> float_ms = end - start;
-        cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count() << " milliseconds" << endl;
-        cout << endl << "-------------------------------------------------" << endl;
+        auto end = chrono::high_resolution_clock::now();
+        auto int_s = chrono::duration_cast<std::chrono::seconds>(end - start);
+        chrono::duration<double, std::milli> float_ms = end - start;
+        if(float_ms.count() > 5000) {
+            cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count()*0.001 << " segundos" << endl;
+        }else{
+            cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count() << " milisegundos" << endl;
+        }
+        cout << endl << "-----------------------------------------------------------" << endl;
 
-        start = std::chrono::high_resolution_clock::now();
+        start = chrono::high_resolution_clock::now();
         optimizedSearch(X,F);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda exhaustiva optimizada:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda exhaustiva optimizada:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
 
-        start = std::chrono::high_resolution_clock::now();
+        start = chrono::high_resolution_clock::now();
         greedAlgoritms(X,F);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy clasico:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda algoritmo greedy clasico:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
 
-        start = std::chrono::high_resolution_clock::now();
+        start = chrono::high_resolution_clock::now();
         OptimizedGreedAlgoritmsV3(X,F,k);
-        end = std::chrono::high_resolution_clock::now();
+        end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milliseconds";
-        cout << endl << "-------------------------------------------------" << endl;
+        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milisegundos";
+        cout << endl << "-----------------------------------------------------------" << endl;
     }
 }
