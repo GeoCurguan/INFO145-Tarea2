@@ -27,13 +27,13 @@ void imprimirSets(set<int> x){
 void imprimirVector(vector<set<int>> F){
     set<int> element;
     set<int>::iterator ite;
-    if (F.size() < 10){
+    //if (F.size() < 10){
     for (size_t i = 0; i < F.size(); i++){
         element.insert(F.at(i).begin(),F.at(i).end());
         imprimirSets(element);
         element.clear();
         }
-    }
+    //}
     cout<< "Tamaño: "<<F.size()<<endl ;
 }
 
@@ -109,6 +109,7 @@ set<int> getIntersection(set<int> x, vector<set<int>> F){
     }
     setComp.clear();
     set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
+    inter.clear();
     return setComp;
 }
 
@@ -139,21 +140,27 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
                 mscSize++;
             }
         }
-        for(size_t j = 1; j < F.size(); j++){
-            vector<int> msc = comb(F.size(),j,x,F);
-            //Si entra al if, es porque encontro un MSC
-            if (!msc.empty()){
-                cout << "MSC encontrado de tamaño: " << msc.size()+mscSize << endl;
-                //Print menor a 60 para no generar un flood en la consola
-                if(msc.size() + mscSize < 60){
-                    for(size_t i = 0; i != msc.size(); i++){
-                        solMscPrint = solMscPrint + "S" + to_string(msc[i]+1) + " ";
-                        //imprimirSets(F[msc[i]]);
+        if(x.size()>0){
+            for(size_t j = 1; j < F.size(); j++){
+                vector<int> msc = comb(F.size(),j,x,F);
+                //Si entra al if, es porque encontro un MSC
+                if (!msc.empty()){
+                    cout << "MSC encontrado de tamaño: " << msc.size()+mscSize << endl;
+                    //Print menor a 60 para no generar un flood en la consola
+                    if(msc.size() + mscSize < 60){
+                        for(size_t i = 0; i != msc.size(); i++){
+                            solMscPrint = solMscPrint + "S" + to_string(msc[i]+1) + " ";
+                            //imprimirSets(F[msc[i]]);
+                        }
+                        cout << solMscPrint << endl;
+                        msc.clear();
                     }
-                    cout << solMscPrint << endl;
+                    break;
                 }
-                break;
             }
+        }else{
+            cout << "MSC encontrado de tamaño: " << mscSize << endl;
+            cout << solMscPrint << endl;
         }
     }
     cout << "Fin Solucion 2" << endl;
@@ -529,7 +536,7 @@ int main(int argc, char **argv){
     }else{
         vector <set<int>> F = randSets();
         set<int> X = getUniverse(F);
-
+        imprimirVector(F);
         auto start = std::chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
         auto end = std::chrono::high_resolution_clock::now();
@@ -537,14 +544,14 @@ int main(int argc, char **argv){
         std::chrono::duration<double, std::milli> float_ms = end - start;
         cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count() << " milliseconds" << endl;
         cout << endl << "-------------------------------------------------" << endl;
-
+        cout << "imprimir vector "<< endl;
         start = std::chrono::high_resolution_clock::now();
         optimizedSearch(X,F);
         end = std::chrono::high_resolution_clock::now();
         float_ms = end - start;
         cout << "Tiempo de busqueda exhaustiva optimizada:  " << float_ms.count() << " milliseconds";
         cout << endl << "-------------------------------------------------" << endl;
-
+        imprimirVector(F);
         start = std::chrono::high_resolution_clock::now();
         greedAlgoritms(X,F);
         end = std::chrono::high_resolution_clock::now();
