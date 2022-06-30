@@ -27,13 +27,13 @@ void imprimirSets(set<int> x){
 void imprimirVector(vector<set<int>> F){
     set<int> element;
     set<int>::iterator ite;
-    //if (F.size() < 10){
+    if (F.size() < 10){
     for (size_t i = 0; i < F.size(); i++){
         element.insert(F.at(i).begin(),F.at(i).end());
         imprimirSets(element);
         element.clear();
         }
-    //}
+    }
     cout<< "Tamaño: "<<F.size()<<endl ;
 }
 
@@ -109,11 +109,9 @@ set<int> getIntersection(set<int> x, vector<set<int>> F){
     }
     setComp.clear();
     set_difference(x.begin(),x.end(),inter.begin(),inter.end(), inserter(setComp, setComp.begin()));
-    inter.clear();
     return setComp;
 }
 
-//Solucion 2
 void optimizedSearch(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 2......" << endl;
     if(F.size() > 1){
@@ -165,7 +163,6 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
     }
     cout << "Fin Solucion 2" << endl;
 }
-
 //Solucion 3 -> algoritmo implementado del pseudocodigo
 void greedAlgoritms(set<int> x, vector<set<int>> F){
     cout << "Comenzando solucion 3......" << endl;
@@ -230,7 +227,6 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
                             setComp.erase(k);
                             }
                         break;
-
                     }
                 }
             }
@@ -259,7 +255,6 @@ void OptimizedGreedAlgoritms(set<int> x, vector<set<int>> F){
         C.push_back(S);
     }
     imprimirVector(C);
-
     cout << "Fin Solucion 4" << endl;
 }
 */
@@ -325,8 +320,11 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     int mayor = 0;
     int countDiferencias = 0;
     size_t i=0;
+    while( k> F.size()){
+        k--;
+    }
 
-    if (k > 1){
+    if (k > 1 && x.size() >= k){
         cout<< "k = "<<k  << endl;
         vector <set<int>> ELEM;
         ELEM = comb2(F.size(),k,x,F);
@@ -336,6 +334,7 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
         }
         C = ELEM;
     }
+
     if(F.size() > 1){
         set<int> setComp = getIntersection(x, F);
         while(setComp.size() > 0){
@@ -419,6 +418,7 @@ vector <set<int>> randSets(){
     srand(time(NULL));
     int num=1+rand()%(100);
     int cantidadSets = 1 + rand()%(100/2);
+    cout<< "candidad: "<<cantidadSets <<endl;
     int probElemUnic = (cantidadSets * 0.05);
 
     if(probElemUnic < 1){
@@ -438,13 +438,14 @@ vector <set<int>> randSets(){
                 int numra = 1 + rand()%(num);
                 //cout << numra << endl;
                 //cout << elecSet << endl;
-                if((c <= probElemUnic) && (elecSet == i)){
-                    for(size_t i = 0; i != efx.size(); i++){
-                        for(auto itr = efx[i].begin(); itr != efx[i].end(); itr++){
+                if((c <= probElemUnic) && (elecSet == i) ){
+                    for(size_t z = 0; z != efx.size(); z++){
+                        if (efx.size() >0){
+                        for(auto itr = efx[z].begin(); itr != efx[z].end(); itr++){
                             if(*itr == insernum){
-                                efx[i].erase(insernum);
+                                efx[z].erase(insernum);
                             }
-                    }
+                    }}
                             /*if(efx[i].find(insernum) == efx[i].end()){
                             efx[i].erase(insernum);
                             imprimirSets(efx[i]);
@@ -458,11 +459,12 @@ vector <set<int>> randSets(){
                         c = c + 1;
                 }
                 else if(numra != insernum){
-                    if(elemunic.size() > 0 && !(find(elemunic.begin(), elemunic.end(), numra) != elemunic.end())){
+                    if(elemunic.size() > 0  && !(find(elemunic.begin(), elemunic.end(), numra) != elemunic.end())){
                         rands.insert(numra);
                     }
                 }
         }
+        if (rands.size()>0)
         efx.push_back(rands);
         rands.clear();
     }
@@ -535,8 +537,11 @@ int main(int argc, char **argv){
 
     }else{
         vector <set<int>> F = randSets();
+        while (F.size() < 0){
+            vector <set<int>> F = randSets();
+        }
         set<int> X = getUniverse(F);
-        imprimirVector(F);
+
         auto start = std::chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
         auto end = std::chrono::high_resolution_clock::now();
@@ -544,14 +549,14 @@ int main(int argc, char **argv){
         std::chrono::duration<double, std::milli> float_ms = end - start;
         cout << "Tiempo de busqueda exhaustiva:  " << float_ms.count() << " milliseconds" << endl;
         cout << endl << "-------------------------------------------------" << endl;
-        cout << "imprimir vector "<< endl;
+
         start = std::chrono::high_resolution_clock::now();
         optimizedSearch(X,F);
         end = std::chrono::high_resolution_clock::now();
         float_ms = end - start;
         cout << "Tiempo de busqueda exhaustiva optimizada:  " << float_ms.count() << " milliseconds";
         cout << endl << "-------------------------------------------------" << endl;
-        imprimirVector(F);
+
         start = std::chrono::high_resolution_clock::now();
         greedAlgoritms(X,F);
         end = std::chrono::high_resolution_clock::now();
