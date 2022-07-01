@@ -214,44 +214,6 @@ set <int> unionDeConjuntos(vector<set<int>> F){
     return Union;
 }
 
-//Combinación de k-conjuntos, y que ademas escoge la mejor combinación de estos k-conjuntos
-vector<set<int>> comb2(int N, int K,set<int> x, vector<set<int>> F)
-{
-    string bitmask(K, 1);
-    bitmask.resize(N, 0);
-    vector<int> A;
-    vector <set<int>> Im;
-    vector <set<int>> MejorUnion;
-    int comparador = 0;
-    set<int> c;
-    set<int> Union;
-    do {
-        set<int> s;
-        for (int i = 0; i < N; ++i)
-        {
-            if (bitmask[i]){
-                s.insert(F[i].begin(),F[i].end());
-                A.push_back(i);
-                }
-        }
-        for (size_t i = 0; i < A.size(); i++){
-            c.insert(F.at(A[i]).begin(),F.at(A[i]).end());
-            Im.push_back(c);
-            c.clear();
-        }
-        Union = unionDeConjuntos(Im);
-        if (comparador < Union.size()){
-            MejorUnion = Im;
-            comparador = Union.size();
-        }
-        Union.clear();
-        s.clear();
-        A.clear();
-        Im.clear();
-    } while (prev_permutation(bitmask.begin(), bitmask.end()));
-    return MejorUnion;
-}
-
 // Función que realiza la mejora (1) y (2) del gready algorithms
 void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     cout << "Comenzando solucion 4......" << endl;
@@ -262,21 +224,6 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
     int mayor = 0;
     int countDiferencias = 0;
     size_t i=0;
-    while( k> F.size()){
-        k--;
-    }
-
-    if (k > 1 && x.size() >= k){
-        cout<< "k = "<<k  << endl;
-        vector <set<int>> ELEM;
-        ELEM = comb2(F.size(),k,x,F);
-        set <int> conjuntosUnidos = unionDeConjuntos(ELEM);
-        for (ite = conjuntosUnidos.begin(); ite != conjuntosUnidos.end(); ite++) {
-            U.erase(*ite);
-        }
-        C = ELEM;
-    }
-
     if(F.size() > 1){
         set<int> setComp = getIntersection(x, F);
         while(setComp.size() > 0){
@@ -293,34 +240,41 @@ void OptimizedGreedAlgoritmsV3(set<int> x, vector<set<int>> F, int k){
                             C.push_back(S);
                             S.clear();
                             setComp.erase(k);
-                            }
+                        }
                         break;
-
                     }
                 }
             }
         }
     }
-    while( U.size() > 0){
-        for(size_t j = 0; j < F.size(); j++){
-            countDiferencias = 0;
-            for (int r : F.at(j)) {
-                if (U.count(r)){
-                    countDiferencias++;
+    while(k > F.size()){
+        k--;
+    }
+    while(U.size() > 0){
+        int aux = 0;
+        while(aux < k && U.size() > 0){
+            //Buscando los k conjuntos
+            set <int> inter;
+            int may = inter.size();
+            int idx;
+            for (size_t i = 0; i < F.size(); i++){
+                set_intersection(U.begin(),U.end(),F[i].begin(),F[i].end(), inserter(inter, inter.begin()));
+                if(may < inter.size()){
+                    idx = i;
+                    may = inter.size();
                 }
+                inter.clear();
             }
-            if (countDiferencias > mayor){
-                S.clear();
-                S.insert(F[j].begin(),F[j].end());
-                mayor = countDiferencias;
+            S.insert(F[idx].begin(),F[idx].end());
+            for (ite = S.begin(); ite != S.end(); ite++) {
+                U.erase(*ite);
             }
+            C.push_back(S);
+            S.clear();
+            inter.clear();
+            aux++;
         }
-        mayor= 0;
-        for (ite = S.begin(); ite != S.end(); ite++) {
-            U.erase(*ite);
-        }
-        C.push_back(S);
-        }
+    }
     imprimirVector(C);
     cout << "Fin Solucion 4.2" << endl;
 }
@@ -365,20 +319,15 @@ vector <set<int>> randSets(){
     if(probElemUnic < 1){
         probElemUnic = probElemUnic + 1;
     }
-    //cout  << cantidadSets << "; " << probElemUnic << endl;
     int c = 0;
     int elecSet = 0 + rand()%(cantidadSets);
     int insernum = 1 + rand()%(num);
     vector <int> elemunic;
-    //cout << insernum << endl;
-    //cout << "elemento unico: " << insernum << endl;
     for (int i = 0; i <= cantidadSets; i++){
         set<int> rands = {};
-        int tamanoSets = 1 + rand()%(100/2);  //FALTA CONTROLAR DEL TODO LA CANTIDAD DE ELEMENTOS UNICOS QUE TIENE CADA SET
+        int tamanoSets = 1 + rand()%(100/2);
         for(int j = 0; j <= tamanoSets; j++){
                 int numra = 1 + rand()%(num);
-                //cout << numra << endl;
-                //cout << elecSet << endl;
                 if((c <= probElemUnic) && (elecSet == i) ){
                     for(size_t z = 0; z != efx.size(); z++){
                         if (efx.size() >0){
@@ -387,17 +336,12 @@ vector <set<int>> randSets(){
                                 efx[z].erase(insernum);
                             }
                     }}
-                            /*if(efx[i].find(insernum) == efx[i].end()){
-                            efx[i].erase(insernum);
-                            imprimirSets(efx[i]);
-                            }*/
                     }
                     rands.insert(insernum);
                     elemunic.push_back(insernum);
                     elecSet = i + rand()%(cantidadSets);
                     insernum = 1 + rand()%(num);
-                    //cout << "nuevo elemento unico: " << insernum << endl;
-                        c = c + 1;
+                    c = c + 1;
                 }
                 else if(numra != insernum){
                     if(elemunic.size() > 0  && !(find(elemunic.begin(), elemunic.end(), numra) != elemunic.end())){
@@ -431,6 +375,8 @@ int main(int argc, char **argv){
         cout << "-----------------------------------------------------------" << endl;
         vector <set<int>> F = readFile("pmed1.txt");
         set<int> X = getUniverse(F);
+        cout << "Tamaño del Universo: " << X.size() << endl;
+        cout << "-----------------------------------------------------------" << endl;
         auto start = chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
         auto end = chrono::high_resolution_clock::now();
@@ -479,7 +425,11 @@ int main(int argc, char **argv){
         OptimizedGreedAlgoritmsV3(X,F,k);
         end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milisegundos";
+        if(float_ms.count() > 5000) {
+            cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count()*0.001 << " segundos";
+        }else{
+            cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milisegundos";
+        }
         cout << endl << "-----------------------------------------------------------" << endl;
 
     }else{
@@ -490,7 +440,8 @@ int main(int argc, char **argv){
             vector <set<int>> F = randSets();
         }
         set<int> X = getUniverse(F);
-
+        cout << "Tamaño del Universo: " << X.size() << endl;
+        cout << "-----------------------------------------------------------" << endl;
         auto start = chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
         auto end = chrono::high_resolution_clock::now();
@@ -521,7 +472,10 @@ int main(int argc, char **argv){
         OptimizedGreedAlgoritmsV3(X,F,k);
         end = chrono::high_resolution_clock::now();
         float_ms = end - start;
-        cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milisegundos";
-        cout << endl << "-----------------------------------------------------------" << endl;
+        if(float_ms.count() > 5000) {
+            cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count()*0.001 << " segundos" << endl;;
+        }else{
+            cout << "Tiempo de busqueda algoritmo greedy optimizado:  " << float_ms.count() << " milisegundos" << endl;
+        }
     }
 }
