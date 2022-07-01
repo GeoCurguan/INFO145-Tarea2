@@ -374,6 +374,7 @@ int main(int argc, char **argv){
         vector <set<int>> F = readFile("pmed1.txt");
         set<int> X = getUniverse(F);
         cout << "Tamaño del Universo: " << X.size() << endl;
+        cout << "Cantidad de conjuntos: "<< F.size() <<endl;
         cout << "-----------------------------------------------------------" << endl;
         auto start = chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
@@ -439,6 +440,7 @@ int main(int argc, char **argv){
         }
         set<int> X = getUniverse(F);
         cout << "Tamaño del Universo: " << X.size() << endl;
+        cout << "Cantidad de conjuntos: "<< F.size() <<endl;
         cout << "-----------------------------------------------------------" << endl;
         auto start = chrono::high_resolution_clock::now();
         exhaustiveSearch(X,F);
