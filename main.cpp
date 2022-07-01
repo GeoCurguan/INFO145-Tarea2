@@ -151,7 +151,6 @@ void optimizedSearch(set<int> x, vector<set<int>> F){
                     if(msc.size() + mscSize < 60){
                         for(size_t i = 0; i != msc.size(); i++){
                             solMscPrint = solMscPrint + "S" + to_string(msc[i]+1) + " ";
-                            //imprimirSets(F[msc[i]]);
                         }
                         cout << solMscPrint << endl;
                         msc.clear();
