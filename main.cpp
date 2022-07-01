@@ -312,7 +312,6 @@ vector <set<int>> randSets(){
     srand(time(NULL));
     int num=1+rand()%(100);
     int cantidadSets = 1 + rand()%(100/2);
-    cout<< "cantidad: "<<cantidadSets <<endl;
     int probElemUnic = (cantidadSets * 0.05);
 
     if(probElemUnic < 1){
